@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Level>
+	<Object>
+		<Position>
+			<X>1</X>
+			<Y>2</Y>
+		</Position>
+
+		<Texture>
+		some kind of texture.whatever
+		</Texture>
+
+<Color>
+<Red>50</Red>
+<Green>100</Green>
+<Blue>150</Blue>
+<Alpha>200</Alpha>
+</Color>
+
+<CollisionSetting>Some-kind of-collision-setting</CollisionSetting>
+<Size>100</Size>
+<Rotation>360</Rotation>
+</Object>
+</Level>

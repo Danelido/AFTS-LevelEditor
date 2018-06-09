@@ -1,0 +1,46 @@
+----HOW TO ADD TEXTURES----
+1: Open EntityObject.txt
+2:
+// This is the format
+Texture File: block_01.png
+Custom Name: block
+
+Texture file is the name of the texture
+Custom name is the name that will show up on the table
+
+Note that there can only be one spawnpoint because the player spawn once :P
+There can be unlimited finishpoint because
+the finish line might be very wide or
+very tall depending on the layout of the map
+
+
+----CONTROLS----
+
+Left mouse: 
+Move around if no entities is selected
+If entity is selected then you can move it around
+
+Right mouse:
+Move around even if entities is selected.
+
+Scroll:
+Zoom in and out
+
+Shift + left mouse:
+You can select multiple entities
+
+CTRL + left mouse:
+Add multiple entities at once
+
+CTRL + Z:
+Undo the latest action ( one by one )
+
+Escape:
+Unselect the selected entities
+
+
+
+
+
+
+

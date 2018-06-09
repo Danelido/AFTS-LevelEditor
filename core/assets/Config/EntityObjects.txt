@@ -1,0 +1,27 @@
+Texture File: block_01.png
+Custom Name: block_01
+
+Texture File: block_02.png
+Custom Name: block_02
+
+Texture File: block_03.png
+Custom Name: block_03
+
+Texture File: block_04.png
+Custom Name: block_04
+
+Texture File: spike_01.png
+Custom Name: spike_01
+
+Texture File: tile.png
+Custom Name: tile
+
+Texture File: tile2.png
+Custom Name: tile2
+
+
+Texture File: tile3.png
+Custom Name: tile3
+
+Texture File: tile4.png
+Custom Name: tile4
