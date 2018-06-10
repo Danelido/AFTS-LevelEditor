@@ -74,8 +74,8 @@ public class PropertySettings {
 	
 	private Color textColor = new Color(255.f / 255.f, 255.f / 255.f, 255.f / 255.f, 1.f);
 	
-	public static final String STRING_MOVEABLE = "MOVEABLE";
-	public static final String STRING_NON_MOVEABLE = "NON_MOVEABLE";
+	public static final String STRING_MOVEABLE = "MOVABLE";
+	public static final String STRING_NON_MOVEABLE = "NON_MOVABLE";
 	public static final String STRING_DESTROY = "DESTROY";
 	public static final String STRING_NOTHING = "NOTHING";
 	public static final String STRING_HURT_PLAYER = "HURT_PLAYER";
@@ -235,7 +235,7 @@ public class PropertySettings {
 		this.stage.addActor(this.collisionLabel);
 			
 			// Solid
-		this.col_nonMoveable = new CheckBox(" Non moveable", this.skin);
+		this.col_nonMoveable = new CheckBox(" Non movable", this.skin);
 		this.col_nonMoveable.setPosition(paddingX, this.collisionLabel.getY() - paddingY);
 		this.col_nonMoveable.setZIndex(0);
 		this.col_nonMoveable.setChecked(true);
@@ -243,7 +243,7 @@ public class PropertySettings {
 		this.stage.addActor(this.col_nonMoveable);
 		
 			// Bounce
-		this.col_moveable = new CheckBox(" Moveable", this.skin);
+		this.col_moveable = new CheckBox(" Movable", this.skin);
 		this.col_moveable.setPosition(paddingX, this.col_nonMoveable.getY() - paddingY);
 		this.col_moveable.setZIndex(1);
 		this.col_moveable.setColor(this.textColor);
