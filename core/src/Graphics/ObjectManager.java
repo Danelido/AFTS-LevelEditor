@@ -467,6 +467,11 @@ public class ObjectManager {
 		else
 		if(action.flag == ACTION_FLAG.WAS_ADDED)
 		{
+			if(action.referenceToObject.getType() == EntityType.SPAWNPOINT)
+			{
+				this.playerSpawnPointAdded = false;
+				this.playerSpawnPointArrayLocation = -1;
+			}
 			ObjectManager.objects.remove(action.referenceToObject);
 			this.latestActions.remove(--this.actionListIndexPointer);
 		}

@@ -447,6 +447,7 @@ public class UserActions {
 				temp.setPosition(new Vector2(positionX - (temp.getSize() / 2.f), positionY - (temp.getSize() / 2.f)));
 				temp.setRotation(rotation);
 				temp.setTextureIDFromTextureTable(textureID);
+				temp.setOnCollision(this.settings.getProperties().getOnCollisionSetting());
 				temp.setColorRGB(this.settings.getProperties().getColorRGB().x,
 						this.settings.getProperties().getColorRGB().y,
 						this.settings.getProperties().getColorRGB().z);

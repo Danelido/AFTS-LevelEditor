@@ -28,8 +28,6 @@ public class PropertySettings {
 	public final static float MAX_COLOR = 255;
 	public final static float MAX_ROTATION = 360;
 	
-	
-	
 	private ShapeRenderer shapeRenderer;
 
 	private Stage stage;
@@ -58,7 +56,7 @@ public class PropertySettings {
 	
 	private float rotationLastChecked;
 	private Label collisionLabel;
-	private CheckBox col_solid, col_bounce, col_destroy, col_nothing, col_kill;
+	private CheckBox col_nonMoveable, col_moveable, col_destroy, col_nothing, col_hurtPlayer;
 	private Label warningLabel;
 	
 	// Save and load level buttons
@@ -76,7 +74,13 @@ public class PropertySettings {
 	
 	private Color textColor = new Color(255.f / 255.f, 255.f / 255.f, 255.f / 255.f, 1.f);
 	
-	private String onCollisionSetting = "solid";
+	public static final String STRING_MOVEABLE = "MOVEABLE";
+	public static final String STRING_NON_MOVEABLE = "NON_MOVEABLE";
+	public static final String STRING_DESTROY = "DESTROY";
+	public static final String STRING_NOTHING = "NOTHING";
+	public static final String STRING_HURT_PLAYER = "HURT_PLAYER";
+	private String onCollisionSetting = STRING_NON_MOVEABLE;
+	
 	private String onCollisionSettingLastChecked = onCollisionSetting;
 	
 	public PropertySettings(Stage stage, Skin skin)
@@ -231,23 +235,23 @@ public class PropertySettings {
 		this.stage.addActor(this.collisionLabel);
 			
 			// Solid
-		this.col_solid = new CheckBox(" Solid", this.skin);
-		this.col_solid.setPosition(paddingX, this.collisionLabel.getY() - paddingY);
-		this.col_solid.setZIndex(0);
-		this.col_solid.setChecked(true);
-		this.col_solid.setColor(this.textColor);
-		this.stage.addActor(this.col_solid);
+		this.col_nonMoveable = new CheckBox(" Non moveable", this.skin);
+		this.col_nonMoveable.setPosition(paddingX, this.collisionLabel.getY() - paddingY);
+		this.col_nonMoveable.setZIndex(0);
+		this.col_nonMoveable.setChecked(true);
+		this.col_nonMoveable.setColor(this.textColor);
+		this.stage.addActor(this.col_nonMoveable);
 		
 			// Bounce
-		this.col_bounce = new CheckBox(" Bounce", this.skin);
-		this.col_bounce.setPosition(paddingX, this.col_solid.getY() - paddingY);
-		this.col_bounce.setZIndex(1);
-		this.col_bounce.setColor(this.textColor);
-		this.stage.addActor(this.col_bounce);
+		this.col_moveable = new CheckBox(" Moveable", this.skin);
+		this.col_moveable.setPosition(paddingX, this.col_nonMoveable.getY() - paddingY);
+		this.col_moveable.setZIndex(1);
+		this.col_moveable.setColor(this.textColor);
+		this.stage.addActor(this.col_moveable);
 			
 			// Destroy
 		this.col_destroy = new CheckBox(" Destroy", this.skin);
-		this.col_destroy.setPosition(paddingX, this.col_bounce.getY() - paddingY);
+		this.col_destroy.setPosition(paddingX, this.col_moveable.getY() - paddingY);
 		this.col_destroy.setZIndex(2);
 		this.col_destroy.setColor(this.textColor);
 		this.stage.addActor(this.col_destroy);
@@ -260,16 +264,16 @@ public class PropertySettings {
 		this.stage.addActor(this.col_nothing);
 		
 			// Kill
-		this.col_kill = new CheckBox(" Kill", this.skin);
-		this.col_kill.setPosition(paddingX, this.col_nothing.getY() - paddingY);
-		this.col_kill.setZIndex(4);
-		this.col_kill.setColor(this.textColor);
-		this.stage.addActor(this.col_kill);
+		this.col_hurtPlayer = new CheckBox(" Hurt player", this.skin);
+		this.col_hurtPlayer.setPosition(paddingX, this.col_nothing.getY() - paddingY);
+		this.col_hurtPlayer.setZIndex(4);
+		this.col_hurtPlayer.setColor(this.textColor);
+		this.stage.addActor(this.col_hurtPlayer);
 		
 		// Load and save level buttons
 		this.saveLevelButton = new TextButton("Save Level", this.skin);
 		this.saveLevelButton.setWidth(100.f);
-		this.saveLevelButton.setPosition(paddingX, this.col_kill.getY() - paddingY*3);
+		this.saveLevelButton.setPosition(paddingX, this.col_hurtPlayer.getY() - paddingY*3);
 		this.stage.addActor(this.saveLevelButton);
 		
 		this.loadLevelButton = new TextButton("Load Level", this.skin);
@@ -555,27 +559,27 @@ public class PropertySettings {
 			}
 		});
 		
-		this.col_solid.addListener(new ChangeListener() {
+		this.col_nonMoveable.addListener(new ChangeListener() {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				if(PropertySettings.this.col_solid.isChecked())
+				if(PropertySettings.this.col_nonMoveable.isChecked())
 				{
-					PropertySettings.this.inactivateOtherCheckboxes(PropertySettings.this.col_solid.getZIndex());
-					PropertySettings.this.onCollisionSetting = "solid";
+					PropertySettings.this.inactivateOtherCheckboxes(PropertySettings.this.col_nonMoveable.getZIndex());
+					PropertySettings.this.onCollisionSetting = PropertySettings.this.STRING_NON_MOVEABLE;
 				}
 			}
 			
 		});
 		
-		this.col_bounce.addListener(new ChangeListener() {
+		this.col_moveable.addListener(new ChangeListener() {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				if(PropertySettings.this.col_bounce.isChecked())
+				if(PropertySettings.this.col_moveable.isChecked())
 				{
-					PropertySettings.this.inactivateOtherCheckboxes(PropertySettings.this.col_bounce.getZIndex());
-					PropertySettings.this.onCollisionSetting = "bounce";
+					PropertySettings.this.inactivateOtherCheckboxes(PropertySettings.this.col_moveable.getZIndex());
+					PropertySettings.this.onCollisionSetting = PropertySettings.this.STRING_MOVEABLE;
 				}
 			}
 			
@@ -589,7 +593,7 @@ public class PropertySettings {
 				if(PropertySettings.this.col_destroy.isChecked())
 				{
 					PropertySettings.this.inactivateOtherCheckboxes(PropertySettings.this.col_destroy.getZIndex());
-					PropertySettings.this.onCollisionSetting = "destroy";
+					PropertySettings.this.onCollisionSetting = PropertySettings.this.STRING_DESTROY;
 				}
 			}
 			
@@ -603,20 +607,20 @@ public class PropertySettings {
 				if(PropertySettings.this.col_nothing.isChecked())
 				{
 					PropertySettings.this.inactivateOtherCheckboxes(PropertySettings.this.col_nothing.getZIndex());
-					PropertySettings.this.onCollisionSetting = "nothing";
+					PropertySettings.this.onCollisionSetting = PropertySettings.this.STRING_NOTHING;
 				}
 			}
 			
 		});
 		
-		this.col_kill.addListener(new ChangeListener() {
+		this.col_hurtPlayer.addListener(new ChangeListener() {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				if(PropertySettings.this.col_kill.isChecked())
+				if(PropertySettings.this.col_hurtPlayer.isChecked())
 				{
-					PropertySettings.this.inactivateOtherCheckboxes(PropertySettings.this.col_kill.getZIndex());
-					PropertySettings.this.onCollisionSetting = "kill";
+					PropertySettings.this.inactivateOtherCheckboxes(PropertySettings.this.col_hurtPlayer.getZIndex());
+					PropertySettings.this.onCollisionSetting = PropertySettings.this.STRING_HURT_PLAYER;
 				}
 			}
 			
@@ -651,11 +655,11 @@ public class PropertySettings {
 	
 	private void inactivateOtherCheckboxes(int z)
 	{
-		if(this.col_solid.getZIndex() != z)
-			this.col_solid.setChecked(false);
+		if(this.col_nonMoveable.getZIndex() != z)
+			this.col_nonMoveable.setChecked(false);
 		
-		if(this.col_bounce.getZIndex() != z)
-			this.col_bounce.setChecked(false);
+		if(this.col_moveable.getZIndex() != z)
+			this.col_moveable.setChecked(false);
 		
 		if(this.col_destroy.getZIndex() != z)
 			this.col_destroy.setChecked(false);
@@ -663,8 +667,8 @@ public class PropertySettings {
 		if(this.col_nothing.getZIndex() != z)
 			this.col_nothing.setChecked(false);
 
-		if(this.col_kill.getZIndex() != z)
-			this.col_kill.setChecked(false);
+		if(this.col_hurtPlayer.getZIndex() != z)
+			this.col_hurtPlayer.setChecked(false);
 	}
 	
 	public void displayPanel()
@@ -686,29 +690,29 @@ public class PropertySettings {
 	{
 		this.inactivateOtherCheckboxes(-1);
 		
-		if(setting.equalsIgnoreCase("solid"))
+		if(setting.equalsIgnoreCase(this.STRING_NON_MOVEABLE))
 		{
-			this.col_solid.setChecked(true);
+			this.col_nonMoveable.setChecked(true);
 		}
 		
-		if(setting.equalsIgnoreCase("bounce"))
+		if(setting.equalsIgnoreCase(this.STRING_MOVEABLE))
 		{
-			this.col_bounce.setChecked(true);
+			this.col_moveable.setChecked(true);
 		}
 		
-		if(setting.equalsIgnoreCase("destroy"))
+		if(setting.equalsIgnoreCase(this.STRING_DESTROY))
 		{
 			this.col_destroy.setChecked(true);
 		}
 		
-		if(setting.equalsIgnoreCase("nothing"))
+		if(setting.equalsIgnoreCase(this.STRING_NOTHING))
 		{
 			this.col_nothing.setChecked(true);
 		}
 		
-		if(setting.equalsIgnoreCase("kill"))
+		if(setting.equalsIgnoreCase(this.STRING_HURT_PLAYER))
 		{
-			this.col_kill.setChecked(true);
+			this.col_hurtPlayer.setChecked(true);
 		}
 	}
 	

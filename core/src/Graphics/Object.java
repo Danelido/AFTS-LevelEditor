@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import Properties.EntityType;
+import Properties.PropertySettings;
 
 public class Object {
 
@@ -21,7 +22,7 @@ public class Object {
 	
 	public Object(Texture texture, String fileName, EntityType type)
 	{
-		this.onCollision = "solid";
+		this.onCollision = PropertySettings.STRING_NON_MOVEABLE;
 		this.rotation = 0.f;
 		this.size = 64.f;
 		this.region = new TextureRegion(texture);
@@ -112,6 +113,22 @@ public class Object {
 
 	public void setType(EntityType type){
 		this.type = type;
+	}
+	
+	public void setTypeFromString(String typeString)
+	{
+		if(typeString.equalsIgnoreCase("BLOCK"))
+		{
+			this.type = EntityType.BLOCK;
+		}else if(typeString.equalsIgnoreCase("SPAWNPOINT"))
+		{
+			this.type = EntityType.SPAWNPOINT;
+		}else if(typeString.equalsIgnoreCase("FINISHPOINT"))
+		{
+			this.type = EntityType.FINISHPOINT;
+		}else {
+			this.type = EntityType.__error__;
+		}
 	}
 	
 	public EntityType getType() {

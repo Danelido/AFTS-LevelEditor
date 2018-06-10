@@ -48,16 +48,13 @@ public class ParseFromXML {
 		 
 		//Here comes the root node
 		Element root = document.getDocumentElement();
-		System.out.println(root.getNodeName());
 		 
-		//Get all employees
+		//Get all objects
 		NodeList nList = document.getElementsByTagName("Object");
-		System.out.println("============================");
 		
 		for (int temp = 0; temp < nList.getLength(); temp++)
 		{
 		 Node node = nList.item(temp);
-		 System.out.println("");    //Just a separator
 		 if (node.getNodeType() == Node.ELEMENT_NODE)
 		 {
 		    //Print each object detail
@@ -80,6 +77,7 @@ public class ParseFromXML {
 		    
 		    float size = Float.parseFloat(eElement.getElementsByTagName("Size").item(0).getTextContent());
 		    float rotation = Float.parseFloat(eElement.getElementsByTagName("Rotation").item(0).getTextContent());
+		    String type = eElement.getElementsByTagName("Type").item(0).getTextContent();
 		    int tableTextureID = Integer.parseInt(eElement.getElementsByTagName("TextureTableID").item(0).getTextContent());
 		    
 		    Object object = new Object(texture,textureFileName , EntityType.BLOCK);
@@ -89,6 +87,7 @@ public class ParseFromXML {
 		    object.setOnCollision(collisionSetting);
 		    object.setRotation(rotation);
 		    object.setTextureIDFromTextureTable(tableTextureID);
+		    object.setTypeFromString(type);
 		    this.tempObjectList.add(object);
 		    
 		 }

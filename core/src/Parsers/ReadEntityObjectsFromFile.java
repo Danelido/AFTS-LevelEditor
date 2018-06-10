@@ -60,14 +60,14 @@ public class ReadEntityObjectsFromFile {
 		// Manually add spawnpoint and finishpoint because no need to have them in file
 		this.objects.add(new EntityObject(
 				new Texture(Gdx.files.internal("Textures/player_start.png")),
-				"Textures/player_start.png",
+				"player_start.png",
 				"Player spawn",
 				EntityType.SPAWNPOINT
 				));
 		
 		this.objects.add(new EntityObject(
 				new Texture(Gdx.files.internal("Textures/player_finish.png")),
-				"Textures/player_finish.png",
+				"player_finish.png",
 				"Player finish",
 				EntityType.FINISHPOINT
 				));

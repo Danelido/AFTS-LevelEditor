@@ -109,6 +109,12 @@ public class ParseToXML {
 			rotation.appendChild(doc.createTextNode(Float.toString(object.getRotation())));
 			Object.appendChild(rotation);
 			
+			
+			// Entity type elements
+			Element type = doc.createElement("Type");
+			type.appendChild(doc.createTextNode(object.getType().toString()));
+			Object.appendChild(type);
+			
 			// TextureID ( Used by level editor only ) elements
 			Element textureTableID = doc.createElement("TextureTableID");
 			textureTableID.appendChild(doc.createTextNode(Integer.toString(object.getTextureIDFromTextureTable())));
