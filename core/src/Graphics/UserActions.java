@@ -1,5 +1,6 @@
 package Graphics;
 
+import com.afts.editor.Core;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 
 import EditorPanel.EditPanel;
 import Properties.EntityType;
+import Properties.Utils;
 
 public class UserActions {
 		
@@ -156,6 +158,8 @@ public class UserActions {
 		
 		if(this.actionState == UserActionState.NOTHING && this.objects.getSelectedObjects().size() == 0)
 		{
+			
+		
 			Object temp = new Object(
 					this.settings.getEntityTable().getCurrentTextureObject().getTexture(),
 					this.settings.getEntityTable().getCurrentTextureObject().getTextureFileName()
@@ -165,7 +169,7 @@ public class UserActions {
 			int textureID = this.settings.getEntityTable().getCurrentTextureID();
 			
 			temp.setSize(this.settings.getProperties().getSize());
-			temp.setPosition(new Vector2(this.mousePosition_onMove.x - temp.getSize() / 2.f, this.mousePosition_onMove.y - temp.getSize() / 2.f));
+			temp.setPosition(this.getPositionBasedOnMode(temp));
 			temp.setRotation(rotation);
 			temp.setTextureIDFromTextureTable(textureID);
 			temp.setColorRGB(this.settings.getProperties().getColorRGB().x,
@@ -261,7 +265,7 @@ public class UserActions {
 				,type);
 		
 		temp.setSize(this.settings.getProperties().getSize());
-		temp.setPosition(new Vector2(position.x - temp.getSize() / 2.f, position.y - temp.getSize() / 2.f));
+		temp.setPosition(this.getPositionBasedOnMode(temp));
 		temp.setRotation(rotation);
 		temp.setOnCollision(onCollision);
 		temp.setTextureIDFromTextureTable(textureID);
@@ -272,7 +276,36 @@ public class UserActions {
 		this.objects.addObject(temp);
 	}
 	
-	
+	private Vector2 getPositionBasedOnMode(Object obj)
+	{
+		
+		if(this.settings.isFreeMode())
+			return new Vector2(this.mousePosition_onMove.x - obj.getSize() / 2.f, this.mousePosition_onMove.y - obj.getSize() / 2.f);
+		else
+		{
+			int cellPositionX = 0;
+			int cellPositionY = 0;
+			
+			if(this.mousePosition_onMove.x < 0){
+				cellPositionX = (int)(this.mousePosition_onMove.x - (int)obj.getSize()) / (int)obj.getSize();
+			}else{
+				cellPositionX = (int)this.mousePosition_onMove.x / (int)obj.getSize();
+			}
+			
+			if(this.mousePosition_onMove.y < 0){
+				cellPositionY = (int)(this.mousePosition_onMove.y - (int)obj.getSize()) / (int)obj.getSize();
+			}else{
+				cellPositionY = (int)this.mousePosition_onMove.y / (int)obj.getSize();
+			}
+			
+		
+			Vector2 position = new Vector2(0,0);
+			position.x = cellPositionX * (int)obj.getSize();
+			position.y = cellPositionY * (int)obj.getSize();
+			
+			return position;
+		}
+	}
 	
 	
 	private void reset()
@@ -398,8 +431,40 @@ public class UserActions {
 	
 	private void action_pre_mass_add()
 	{
-		float distance = this.massAddStartPosition.dst(this.mousePosition_onMove.cpy());
+		if(this.settings.isFreeMode()) 
+		{
+			this.preMassIndicate_FreeMode();
+		}
+		else if(this.settings.isGridMode())
+		{
+			this.preMassIndicate_gridMode();
+		}
+			
+		
+	}
 	
+	private void action_mass_add()
+	{
+		this.objects.addAllIndicationsToMainList();
+	}
+	
+	private void action_clear_selected_objects()
+	{
+		this.objects.clearCurrentSelectedObject();
+	}
+	
+	private void action_revert_last_changes()
+	{
+		this.objects.revertLatestActionMade();
+		this.objects.clearCurrentSelectedObject();
+	}
+	
+	//------------------------------------------------------------------------------------------------------------------------------------------
+	
+	private void preMassIndicate_FreeMode()
+	{
+		float distance = this.massAddStartPosition.dst(this.mousePosition_onMove.cpy());
+		
 		if(distance > 1.f && this.settings.getProperties().getSize() >= 1) {
 			
 			int numberOfObjects = 0;
@@ -436,8 +501,10 @@ public class UserActions {
 				
 				temp.setSize(this.settings.getProperties().getSize());
 				
-				float xDir =  (this.massAddStartPosition.x - mousePosition_onMove.x) / distance;
-				float yDir =  (this.massAddStartPosition.y - mousePosition_onMove.y) / distance;
+				float xDir = (this.massAddStartPosition.x - mousePosition_onMove.x) / distance;
+				float yDir = (this.massAddStartPosition.y - mousePosition_onMove.y) / distance;
+				
+				
 				
 				float positionX = 
 						 (this.massAddStartPosition.x - (temp.getSize() * xDir) * i);
@@ -457,25 +524,92 @@ public class UserActions {
 		}
 	}
 	
-	private void action_mass_add()
+	/* 
+	 * 	TODO:
+	 *  The indication jumps 1 cell to the right or/and up when x or/and y is negative
+	 *  
+	 */
+	private void preMassIndicate_gridMode()
 	{
-		this.objects.addAllIndicationsToMainList();
+		
+		int distanceX = (int)this.massAddStartPosition.x - (int)this.mousePosition_onMove.x;
+		int distanceY = (int)this.massAddStartPosition.y - (int)this.mousePosition_onMove.y;
+		
+		int startCellX = (int)this.massAddStartPosition.x / (int)this.settings.getProperties().getSize();
+		
+		int signX = Utils.getSign(distanceX);
+		int signY = Utils.getSign(distanceY);
+		
+		int cellsX = (distanceX + signX * (int)this.settings.getProperties().getSize()/2) / (int)this.settings.getProperties().getSize();
+		int cellsY = (distanceY + signY * (int)this.settings.getProperties().getSize()/2) / (int)this.settings.getProperties().getSize();
+		
+		cellsX = Math.abs(cellsX) + 1;
+		cellsY = Math.abs(cellsY);
+		
+		Object endObject = null;
+		
+		this.objects.clearIndicateList();
+			
+		for(int i = 0; i < cellsX; i++)
+		{
+			Object temp = new Object(
+					this.settings.getEntityTable().getCurrentTextureObject().getTexture(),
+					this.settings.getEntityTable().getCurrentTextureObject().getTextureFileName()
+					,this.settings.getEntityTable().getCurrentTextureObject().getType());
+			
+			float rotation = this.settings.getProperties().getRotation();
+			int textureID = this.settings.getEntityTable().getCurrentTextureID();
+			
+			temp.setSize(this.settings.getProperties().getSize());
+			
+		
+			float positionX = startCellX * (int)temp.getSize();
+			positionX -= temp.getSize() * signX * (i);
+			float positionY = ((int)this.massAddStartPosition.y / (int)temp.getSize());
+			positionY = positionY * (int)temp.getSize();
+			
+			temp.setPosition(new Vector2(positionX, positionY));
+			temp.setRotation(rotation);
+			temp.setTextureIDFromTextureTable(textureID);
+			temp.setOnCollision(this.settings.getProperties().getOnCollisionSetting());
+			temp.setColorRGB(this.settings.getProperties().getColorRGB().x,
+					this.settings.getProperties().getColorRGB().y,
+					this.settings.getProperties().getColorRGB().z);
+			
+			this.objects.indicate_multiple(temp);
+			
+			endObject = temp;
+		}
+		
+		for(int i = 0; i < cellsY; i++)
+		{
+			Object temp = new Object(
+					this.settings.getEntityTable().getCurrentTextureObject().getTexture(),
+					this.settings.getEntityTable().getCurrentTextureObject().getTextureFileName()
+					,this.settings.getEntityTable().getCurrentTextureObject().getType());
+			
+			float rotation = this.settings.getProperties().getRotation();
+			int textureID = this.settings.getEntityTable().getCurrentTextureID();
+			
+			temp.setSize(this.settings.getProperties().getSize());
+			
+			float positionX = endObject.getPosition().x;
+			float positionY = endObject.getPosition().y - (signY * temp.getSize());
+			positionY -= temp.getSize() * signY * i;
+			
+			temp.setPosition(new Vector2(positionX, positionY));
+			temp.setRotation(rotation);
+			temp.setTextureIDFromTextureTable(textureID);
+			temp.setOnCollision(this.settings.getProperties().getOnCollisionSetting());
+			temp.setColorRGB(this.settings.getProperties().getColorRGB().x,
+					this.settings.getProperties().getColorRGB().y,
+					this.settings.getProperties().getColorRGB().z);
+			
+			this.objects.indicate_multiple(temp);
+			
+		}	
+		
 	}
-	
-	private void action_clear_selected_objects()
-	{
-		this.objects.clearCurrentSelectedObject();
-	}
-	
-	private void action_revert_last_changes()
-	{
-		this.objects.revertLatestActionMade();
-		this.objects.clearCurrentSelectedObject();
-	}
-	
-	//------------------------------------------------------------------------------------------------------------------------------------------
-	
-	
 	
 	public void setScroll(int amount)
 	{

@@ -90,15 +90,19 @@ public class GraphicState implements InputProcessor{
 		this.font.draw(this.spritebatch, "Number of objects: " + this.objectManager.getNrOfObjects(),
 		this.textCamera.position.x, Core.WINDOW_HEIGHT / 2.f - 10.f  + this.textCamera.position.y);
 		
+		this.font.draw(this.spritebatch, "Last flag added: " + this.objectManager.getLatestAction()
+		,this.textCamera.position.x, Core.WINDOW_HEIGHT / 2.f - 35.f + this.textCamera.position.y);
+		
+		
 		this.font.draw(this.spritebatch, "Camera position: [" + this.camera.position.x + ", " + this.camera.position.y + "]" ,
 				this.textCamera.position.x + Core.WINDOW_WIDTH / 4.f , Core.WINDOW_HEIGHT / 2.f - 10.f  + this.textCamera.position.y);
 		
 		this.font.draw(this.spritebatch, "Camera zoom: " + String.format("%.0f",(this.camera.zoom * 100.f)) + " %",
 				this.textCamera.position.x  + Core.WINDOW_WIDTH / 4.f, Core.WINDOW_HEIGHT / 2.f - 35.f  + this.textCamera.position.y);
 		
-		this.font.draw(this.spritebatch, "Last flag added: " + this.objectManager.getLatestAction()
-		,this.textCamera.position.x, Core.WINDOW_HEIGHT / 2.f - 35.f + this.textCamera.position.y);
-		
+		this.font.draw(this.spritebatch, "Mode: " + this.settings.modeToString(),
+				this.textCamera.position.x  + Core.WINDOW_WIDTH / 4.f, Core.WINDOW_HEIGHT / 2.f - 60.f  + this.textCamera.position.y);
+	
 		if(this.userAction.getActionState() == UserActionState.PRE_MASS_ADD)
 		this.font.draw(this.spritebatch, "Rotation(: " + this.userAction.getPreMassAddDegree() + ")"
 		,this.textCamera.position.x, Core.WINDOW_HEIGHT / 2.f - 70.f + this.textCamera.position.y);

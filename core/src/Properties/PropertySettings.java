@@ -79,8 +79,8 @@ public class PropertySettings {
 	public static final String STRING_DESTROY = "DESTROY";
 	public static final String STRING_NOTHING = "NOTHING";
 	public static final String STRING_HURT_PLAYER = "HURT_PLAYER";
-	private String onCollisionSetting = STRING_NON_MOVEABLE;
 	
+	private String onCollisionSetting = STRING_NON_MOVEABLE;
 	private String onCollisionSettingLastChecked = onCollisionSetting;
 	
 	public PropertySettings(Stage stage, Skin skin)

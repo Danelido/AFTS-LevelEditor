@@ -30,7 +30,12 @@ public class EditPanel {
 	private ObjectInfoPanel objectInfoPanel;
 	
 	private TextButton showOrHideButton;
-	float totalPanelWidth;
+	private TextButton freeModeButton;
+	private TextButton gridModeButton;
+	
+	private float totalPanelWidth;
+	private boolean gridMode;
+	private boolean freeMode = true;
 	
 	private ShapeRenderer renderer;
 	private SpriteBatch batch;
@@ -58,7 +63,7 @@ public class EditPanel {
 		
 		this.totalPanelWidth = PropertySettings.propertyPanelWidth + this.entityTable.getSizeOfPanel().x;
 		this.initializeShowOrHideButton();
-	
+		this.initializeModeButtons();
 		
 		this.objectInfoPanel = new ObjectInfoPanel();
 		
@@ -88,6 +93,68 @@ public class EditPanel {
 		this.stage.addActor(this.showOrHideButton);
 	}
 	
+	private void initializeModeButtons()
+	{
+		// Freemode
+		freeModeButton = new TextButton("FM", this.skin);
+		freeModeButton.setSize(30, 25);
+		freeModeButton.setPosition(stage.getCamera().position.x  + Core.WINDOW_WIDTH / 2.f - freeModeButton.getWidth() - 10.f,  35.f);
+		freeModeButton.setColor(Color.GREEN); // True at start
+		
+		this.freeModeButton.addListener(new ClickListener() {
+			
+			public void clicked(InputEvent inputEvent, float x, float y)
+			{
+				if(!EditPanel.this.properties.saveLevel() && !EditPanel.this.properties.loadLevel() ) {
+				
+					if(EditPanel.this.gridMode) {
+						EditPanel.this.gridMode = false;
+						EditPanel.this.gridModeButton.setColor(Color.GRAY);
+					}
+					
+					EditPanel.this.freeMode = true;
+					EditPanel.this.freeModeButton.setColor(Color.GREEN);
+					
+				}
+			}
+		});
+		
+		
+		// Gridmode
+		gridModeButton = new TextButton("GM", this.skin);
+		gridModeButton.setSize(30, 25);
+		gridModeButton.setPosition(this.freeModeButton.getX(),  5.f);
+
+		this.gridModeButton.addListener(new ClickListener() {
+			
+			public void clicked(InputEvent inputEvent, float x, float y)
+			{
+				if(!EditPanel.this.properties.saveLevel() && !EditPanel.this.properties.loadLevel() ) {
+				
+					if(EditPanel.this.freeMode) {
+						EditPanel.this.freeMode = false;
+						EditPanel.this.freeModeButton.setColor(Color.GRAY);
+					}
+					
+					EditPanel.this.gridMode = true;
+					EditPanel.this.gridModeButton.setColor(Color.GREEN);
+					
+				}
+			}
+		});
+		
+		
+		
+		this.stage.addActor(this.freeModeButton);
+		this.stage.addActor(this.gridModeButton);
+	}
+	
+	private void keepModeButtonsInPlace()
+	{
+		freeModeButton.setPosition(stage.getCamera().position.x  + Core.WINDOW_WIDTH / 2.f - freeModeButton.getWidth() - 10.f,  35.f);
+		gridModeButton.setPosition(this.freeModeButton.getX(),  5.f);
+	}
+	
 	private void show_hide_updater()
 	{
 	
@@ -113,9 +180,8 @@ public class EditPanel {
 	public void draw()
 	{
 		
-		
 		this.show_hide_updater();
-	
+		this.keepModeButtonsInPlace();
 		this.properties.displayPanel();
 		
 		this.renderer.setProjectionMatrix(this.stage.getCamera().combined);
@@ -243,6 +309,27 @@ public class EditPanel {
 				pos.y > ObjectInfoPanel.panelPosition.y ) return true;
 		
 		return false;
+	}
+	
+	public boolean isFreeMode()
+	{
+		return this.freeMode;
+	}
+	
+	public boolean isGridMode()
+	{
+		return this.gridMode;
+	}
+	
+	public String modeToString()
+	{
+		if(this.freeMode)
+			return "Free mode";
+		
+		if(this.gridMode)
+			return "Grid mode";
+		
+		return "NULL";
 	}
 	
 }
