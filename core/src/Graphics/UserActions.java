@@ -349,7 +349,7 @@ public class UserActions {
 			this.settings.getEntityTable().setCurrentTextureID(temp.getTextureIDFromTextureTable());
 			this.objects.setSelectedObject(temp);
 		}	
-	}
+	}	
 	
 	private void action_move_camera()
 	{
@@ -504,8 +504,6 @@ public class UserActions {
 				float xDir = (this.massAddStartPosition.x - mousePosition_onMove.x) / distance;
 				float yDir = (this.massAddStartPosition.y - mousePosition_onMove.y) / distance;
 				
-				
-				
 				float positionX = 
 						 (this.massAddStartPosition.x - (temp.getSize() * xDir) * i);
 				float positionY = 
@@ -524,90 +522,149 @@ public class UserActions {
 		}
 	}
 	
-	/* 
-	 * 	TODO:
-	 *  The indication jumps 1 cell to the right or/and up when x or/and y is negative
-	 *  
-	 */
 	private void preMassIndicate_gridMode()
 	{
+					
+		int startCellX = 0;
+		int startCellY = 0;
+		int endCellX = 0;
+		int endCellY = 0;
 		
-		int distanceX = (int)this.massAddStartPosition.x - (int)this.mousePosition_onMove.x;
-		int distanceY = (int)this.massAddStartPosition.y - (int)this.mousePosition_onMove.y;
+		/*____________________________________________
+		 *
+		 * 	START CELL
+		 * ___________________________________________
+		 */
+			//X
+			if(this.massAddStartPosition.x < 0)
+				startCellX = (int)(this.massAddStartPosition.x - this.settings.getProperties().getSize()) / (int)this.settings.getProperties().getSize();
+			else
+				startCellX = (int)this.massAddStartPosition.x  / (int)this.settings.getProperties().getSize();
+			
+			// Y
+			if(this.massAddStartPosition.y < 0)
+				startCellY = (int)(this.massAddStartPosition.y - this.settings.getProperties().getSize()) / (int)this.settings.getProperties().getSize();
+			else
+				startCellY = (int)this.massAddStartPosition.y  / (int)this.settings.getProperties().getSize();
+			
+			
+		/*____________________________________________
+		 *
+		 * 	END CELL
+		 * ___________________________________________
+		 */
+			//X
+			if(this.mousePosition_onMove.x < 0)
+				endCellX = (int)(this.mousePosition_onMove.x - this.settings.getProperties().getSize()) / (int)this.settings.getProperties().getSize();
+			else
+				endCellX = (int)this.mousePosition_onMove.x  / (int)this.settings.getProperties().getSize();
+			
+			// Y
+			if(this.mousePosition_onMove.y < 0)
+				endCellY = (int)(this.mousePosition_onMove.y - this.settings.getProperties().getSize()) / (int)this.settings.getProperties().getSize();
+			else
+				endCellY = (int)this.mousePosition_onMove.y  / (int)this.settings.getProperties().getSize();
+			
+			
+		/*____________________________________________
+		 *
+		 * 	DISTANCE BETWEEN THE TWO
+		 * ___________________________________________
+		 */
+			int cellDistAndDirX = startCellX - endCellX;
+			int cellDistAndDirY = startCellY - endCellY;
+			
 		
-		int startCellX = (int)this.massAddStartPosition.x / (int)this.settings.getProperties().getSize();
+		/*____________________________________________
+		 *
+		 * 	PROPERTIES AND SETUP
+		 * ___________________________________________
+		 */
 		
-		int signX = Utils.getSign(distanceX);
-		int signY = Utils.getSign(distanceY);
-		
-		int cellsX = (distanceX + signX * (int)this.settings.getProperties().getSize()/2) / (int)this.settings.getProperties().getSize();
-		int cellsY = (distanceY + signY * (int)this.settings.getProperties().getSize()/2) / (int)this.settings.getProperties().getSize();
-		
-		cellsX = Math.abs(cellsX) + 1;
-		cellsY = Math.abs(cellsY);
-		
-		Object endObject = null;
-		
-		this.objects.clearIndicateList();
+			// Signs	
+			int signX = Utils.getSign(cellDistAndDirX);
+			int signY = Utils.getSign(cellDistAndDirY);
 			
-		for(int i = 0; i < cellsX; i++)
-		{
-			Object temp = new Object(
-					this.settings.getEntityTable().getCurrentTextureObject().getTexture(),
-					this.settings.getEntityTable().getCurrentTextureObject().getTextureFileName()
-					,this.settings.getEntityTable().getCurrentTextureObject().getType());
+			int numberOfCellsX = Math.abs(cellDistAndDirX) + 1;
+			int numberOfCellsY = Math.abs(cellDistAndDirY);
+	
+			Object endObject = null;
 			
-			float rotation = this.settings.getProperties().getRotation();
-			int textureID = this.settings.getEntityTable().getCurrentTextureID();
-			
-			temp.setSize(this.settings.getProperties().getSize());
+			this.objects.clearIndicateList();
 			
 		
-			float positionX = startCellX * (int)temp.getSize();
-			positionX -= temp.getSize() * signX * (i);
-			float positionY = ((int)this.massAddStartPosition.y / (int)temp.getSize());
-			positionY = positionY * (int)temp.getSize();
+		/*____________________________________________
+		 *
+		 * 	INDICATE ON X AXIS
+		 * ___________________________________________
+		 */
+			for(int i = 0; i < numberOfCellsX; i++)
+			{
+				Object temp = new Object(
+						this.settings.getEntityTable().getCurrentTextureObject().getTexture(),
+						this.settings.getEntityTable().getCurrentTextureObject().getTextureFileName()
+						,this.settings.getEntityTable().getCurrentTextureObject().getType());
+				
+				float rotation = this.settings.getProperties().getRotation();
+				int textureID = this.settings.getEntityTable().getCurrentTextureID();
+				
+				temp.setSize(this.settings.getProperties().getSize());
+				
 			
-			temp.setPosition(new Vector2(positionX, positionY));
-			temp.setRotation(rotation);
-			temp.setTextureIDFromTextureTable(textureID);
-			temp.setOnCollision(this.settings.getProperties().getOnCollisionSetting());
-			temp.setColorRGB(this.settings.getProperties().getColorRGB().x,
-					this.settings.getProperties().getColorRGB().y,
-					this.settings.getProperties().getColorRGB().z);
-			
-			this.objects.indicate_multiple(temp);
-			
-			endObject = temp;
-		}
+				float positionX = startCellX * (int)temp.getSize();
+				positionX -= temp.getSize() * signX * (i);
+				float positionY = startCellY * (int)temp.getSize();
+				
+				temp.setPosition(new Vector2(positionX, positionY));
+				temp.setRotation(rotation);
+				temp.setTextureIDFromTextureTable(textureID);
+				temp.setOnCollision(this.settings.getProperties().getOnCollisionSetting());
+				temp.setColorRGB(this.settings.getProperties().getColorRGB().x,
+						this.settings.getProperties().getColorRGB().y,
+						this.settings.getProperties().getColorRGB().z);
+				
+				this.objects.indicate_multiple(temp);
+				
+				endObject = temp;
+			}
 		
-		for(int i = 0; i < cellsY; i++)
-		{
-			Object temp = new Object(
-					this.settings.getEntityTable().getCurrentTextureObject().getTexture(),
-					this.settings.getEntityTable().getCurrentTextureObject().getTextureFileName()
-					,this.settings.getEntityTable().getCurrentTextureObject().getType());
 			
-			float rotation = this.settings.getProperties().getRotation();
-			int textureID = this.settings.getEntityTable().getCurrentTextureID();
 			
-			temp.setSize(this.settings.getProperties().getSize());
+		/*____________________________________________
+		 *
+		 * 	INDICATE ON Y AXIS
+		 * ___________________________________________
+		 */		
+			for(int i = 0; i < numberOfCellsY; i++)
+			{
+				Object temp = new Object(
+						this.settings.getEntityTable().getCurrentTextureObject().getTexture(),
+						this.settings.getEntityTable().getCurrentTextureObject().getTextureFileName()
+						,this.settings.getEntityTable().getCurrentTextureObject().getType());
+				
+				float rotation = this.settings.getProperties().getRotation();
+				int textureID = this.settings.getEntityTable().getCurrentTextureID();
+				
+				temp.setSize(this.settings.getProperties().getSize());
+				
+				float positionX = endObject.getPosition().x;
+				float positionY = (endObject.getPosition().y) - (signY * temp.getSize());
+				
+				positionY -= temp.getSize() * signY * i;
+				
 			
-			float positionX = endObject.getPosition().x;
-			float positionY = endObject.getPosition().y - (signY * temp.getSize());
-			positionY -= temp.getSize() * signY * i;
-			
-			temp.setPosition(new Vector2(positionX, positionY));
-			temp.setRotation(rotation);
-			temp.setTextureIDFromTextureTable(textureID);
-			temp.setOnCollision(this.settings.getProperties().getOnCollisionSetting());
-			temp.setColorRGB(this.settings.getProperties().getColorRGB().x,
-					this.settings.getProperties().getColorRGB().y,
-					this.settings.getProperties().getColorRGB().z);
-			
-			this.objects.indicate_multiple(temp);
-			
-		}	
+				
+				temp.setPosition(new Vector2(positionX, positionY));
+				temp.setRotation(rotation);
+				temp.setTextureIDFromTextureTable(textureID);
+				temp.setOnCollision(this.settings.getProperties().getOnCollisionSetting());
+				temp.setColorRGB(this.settings.getProperties().getColorRGB().x,
+						this.settings.getProperties().getColorRGB().y,
+						this.settings.getProperties().getColorRGB().z);
+				
+				this.objects.indicate_multiple(temp);
+				
+			}	
 		
 	}
 	
